@@ -132,6 +132,7 @@ Click **“Submit instance”** in the UI and confirm the MetaMask transaction. 
 
 - [Ethernaut Game](https://ethernaut.openzeppelin.com/)
 - [Video Walkthrough](https://www.youtube.com/watch?v=Hzu36mTJLeA)
+- [Blog](https://shubhamm.me/blog/07-ethernaut-challenges-hello-ethernaut)
 
 ---
 
