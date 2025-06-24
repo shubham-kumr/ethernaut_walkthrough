@@ -41,8 +41,6 @@ Once the contract is deployed, it will inject a global object called `contract` 
 
 ## Walkthrough – Step by Step
 
-> Open your browser's console (usually via `F12` or `Cmd+Option+I` on macOS) and start entering the following commands:
-
 ### 🗒️ Step 1: Follow the Hint Chain
 
 ```js
