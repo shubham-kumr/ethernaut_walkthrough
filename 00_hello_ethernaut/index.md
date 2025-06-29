@@ -1,135 +1,82 @@
-# Hello Ethernaut – Level 0 Walkthrough
+# Hello Ethernaut
 
-Welcome to the first level of the **Ethernaut** wargame by [OpenZeppelin](https://ethernaut.openzeppelin.com/), designed to teach smart contract security through hands-on hacking.
+## Objective
 
----
-
-## Challenge Objective
-
-You are given a contract deployed to the blockchain. Your goal is to:
-
-- Interact with the contract using JavaScript in the browser console
-- Uncover the password
-- Call the `authenticate()` function with the correct password
-- Successfully pass the level
-
----
-
-## Prerequisites
-
-Before you begin, ensure the following:
-
-- **MetaMask** is installed and connected
-- **Test ETH** is available (Goerli, Sepolia, etc.)
-- Familiarity with using **browser DevTools** and executing JavaScript commands
-- Access to the [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+Interact with the deployed contract to uncover the password and call the `authenticate()` function with the correct value to complete the level.
 
 ---
 
 ## Getting Started
 
-### 1. **Load the Level**
+1. Go to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
+2. Select the **"Hello Ethernaut"** level
+3. Click **“Get new instance”** and approve the transaction in MetaMask
+4. The instance is now deployed and available as the `contract` object in the browser console
+5. Save the instance address:
 
-- Navigate to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
-- Select **"Hello Ethernaut"** from the list of levels
-- Click **"Get new instance"**
-- Approve the MetaMask transaction to deploy your personalized challenge contract
-
-Once the contract is deployed, it will inject a global object called `contract` into your browser console.
+    ```js
+    contract.address
+    ```
 
 ---
 
-## Walkthrough – Step by Step
+## Walkthrough
 
-### 🗒️ Step 1: Follow the Hint Chain
+### Step 1: Follow the Contract's Hint Chain
 
 ```js
 await contract.info()
-```
-> "You will find what you need in info1()."
-
-```js
 await contract.info1()
-```
-> "Try info2(), but with "hello" as a parameter."
-
-```js
 await contract.info2("hello")
-```
-> "The property infoNum holds the number of the next info method to call."
-
-```js
 await contract.infoNum()
-```
-> Returns: BigNumber { value: 42 }
-
-```js
 await contract.info42()
-```
-> "theMethodName is the name of the next method."
-
-```js
 await contract.theMethodName()
-```
-> Returns: "method7123949"
-
-```js
 await contract.method7123949()
 ```
-> "If you know the password, submit it to authenticate()."
+
+**Explanation:**
+Each function provides a hint or directs you to the next function. This sequence leads you to the point where the contract asks for a password.
 
 ---
 
-### 🔐 Step 2: Retrieve the Password
+### Step 2: Retrieve the Password
 
 ```js
 await contract.password()
 ```
-> Returns: "ethernaut0"
+
+**Explanation:**
+The password is stored in a public variable. Reading it directly reveals the value needed for authentication.
 
 ---
 
-### 🔓 Step 3: Authenticate with the Password
+### Step 3: Authenticate Using the Password
 
 ```js
 await contract.authenticate("ethernaut0")
 ```
-Wait for the MetaMask transaction to confirm.
+
+**Explanation:**
+Calling `authenticate()` with the correct password completes the challenge. Confirm the transaction in MetaMask.
 
 ---
 
-### ✅ Step 4: Submit the Level
+## What You Learn
 
-Click **“Submit instance”** in the UI and confirm the MetaMask transaction. Once successful, the level is marked as **completed**.
+This level teaches the following:
 
----
-
-## 💡 What You Learn
-
-- Using `await` to interact with contracts
-- Reading public state variables
-- Navigating contract hints
-- Understanding how contract functions can guide the user
-- Sending transactions using `authenticate()` function
-- The basics of interacting with the Ethereum VM in a real browser context
+* How to interact with smart contracts using JavaScript in the browser console
+* Reading public state variables and functions
+* Navigating contract hints and function chains
+* Sending transactions and authenticating using MetaMask
 
 ---
 
-## Concepts Covered
+## Resources Used
 
-| Concept             | Description                                                                  |
-| ------------------- | ---------------------------------------------------------------------------- |
-| Public Functions    | All `infoX()` and `password()` functions are public and can be called freely |
-| BigNumber Handling  | Values like 42 are returned in BigNumber format by ethers.js                 |
-| Web3 Interaction    | Using injected contract instances and console JS to interact                 |
-| MetaMask Signatures | MetaMask is used to sign and send the transaction to `authenticate()`        |
-
----
-
-## Resources
-
-- [Ethernaut Game](https://ethernaut.openzeppelin.com/)
-- [Video Walkthrough](https://www.youtube.com/watch?v=Hzu36mTJLeA)
-- [Blog](https://shubhamm.me/blog/07-ethernaut-challenges-hello-ethernaut)
+* [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+* [Solidity Docs](https://docs.soliditylang.org/)
+* [Video Walkthrough](https://www.youtube.com/watch?v=Hzu36mTJLeA)
+* [Blog Writeup](https://shubhamm.me/blog/07-ethernaut-challenges-hello-ethernaut)
 
 ---

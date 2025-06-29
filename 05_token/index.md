@@ -1,135 +1,76 @@
-# Token – Level 7 Walkthrough
+# Token
 
-Welcome to the **Token** level of the [**Ethernaut**](https://ethernaut.openzeppelin.com/) wargame by OpenZeppelin, focused on exploiting **integer underflows** in smart contracts.
+## Objective
 
----
-
-## Challenge Objective
-
-You are given an ERC20-like token contract where:
-
-- You start with **20 tokens**
-- Your goal is to:
-    - Exploit the contract to **get more than 20 tokens**
-    - Submit the instance to complete the level
-
----
-
-## Prerequisites
-
-Ensure you have:
-
-- MetaMask installed and connected
-- Some test ETH (e.g., on Sepolia or Goerli)
-- Console access on the Ethernaut page
-- Understanding of basic ERC20 and Solidity underflow vulnerabilities
+Exploit an integer underflow in a vulnerable ERC20-like token contract to increase your token balance beyond the initial allocation.
 
 ---
 
 ## Getting Started
 
-### 1. Load the Level
+1. Go to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
+2. Select the **"Token"** level
+3. Click **“Get new instance”** and approve the transaction in MetaMask
+4. The instance is now deployed and available as the `contract` object in the browser console
+5. Save the instance address:
 
-- Go to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
-- Select **“Token”**
-- Click **"Get new instance"**
-- Confirm transaction in MetaMask
-
-Once deployed, a `contract` object becomes available in the browser DevTools console.
-
----
-
-## Vulnerability Background
-
-The contract looks something like this:
-
-```solidity
-mapping(address => uint) balances;
-
-function transfer(address _to, uint _value) public returns (bool) {
-        require(balances[msg.sender] - _value >= 0);
-        balances[msg.sender] -= _value;
-        balances[_to] += _value;
-        return true;
-}
-```
-
-The key issue:  
-Before Solidity 0.8.0, arithmetic underflows would **wrap around** silently instead of throwing errors. So if you have 20 tokens and try to transfer **21**, your balance becomes:
-
-```
-balances[msg.sender] = 20 - 21 = uint256(-1) = 2^256 - 1
-```
-
-This gives you **a huge number of tokens**.
+    ```js
+    contract.address
+    ```
 
 ---
 
-## Walkthrough – Step by Step
+## Walkthrough
 
-### Step 1: Check Your Balance
+### Step 1: Check Your Initial Balance
 
 ```js
 await contract.balanceOf(player)
-// should return: BigNumber { _hex: '0x14', ... } → 20 tokens
 ```
+
+**Explanation:**  
+This confirms your starting balance (should be 20 tokens) and ensures you are interacting with the correct account.
 
 ---
 
-### Step 2: Transfer More Than You Own
+### Step 2: Trigger the Underflow by Transferring More Than You Own
 
 ```js
 await contract.transfer('0x0000000000000000000000000000000000000000', 21)
 ```
 
-You don’t need the address to be special — we just need the math to trigger.
-
-> 💥 This will cause an **underflow**, giving your account `2^256 - 1` tokens.
+**Explanation:**  
+Transferring more tokens than your balance causes an integer underflow in Solidity versions before 0.8.0, resulting in your balance wrapping to a very large number.
 
 ---
 
-### Step 3: Check Your New Balance
+### Step 3: Verify Your New Balance
 
 ```js
 (await contract.balanceOf(player)).toString()
-// should return something like: '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 ```
 
-Now you have **more than enough tokens**.
-
----
-
-### Step 4: Submit the Level
-
-Click **"Submit instance"** on the Ethernaut UI and confirm in MetaMask.
-
-🎉 Level Complete!
+**Explanation:**  
+This step checks that your balance has increased to a value greater than 20, confirming the underflow exploit was successful.
 
 ---
 
 ## What You Learn
 
-- How integer underflows were a critical vulnerability in pre-0.8 Solidity
-- Importance of safe math operations or compiler safeguards
-- ERC20 basics and smart contract accounting
+This level teaches the following:
+
+* The risks of unchecked arithmetic in Solidity prior to version 0.8.0
+* How integer underflows can be exploited in smart contracts
+* The importance of using safe math operations or compiler checks
+* Defensive programming patterns to prevent similar vulnerabilities
 
 ---
 
-## Concepts Covered
+## Resources Used
 
-| Concept                 | Description                                                                |
-| ----------------------- | -------------------------------------------------------------------------- |
-| Integer underflow       | When subtracting a larger number from a smaller one wraps the number space |
-| ERC20 token standard    | Basic mechanics of token balances and transfers                            |
-| Secure math in Solidity | Use of `SafeMath` library or built-in checks in Solidity >= 0.8            |
-
----
-
-## Resources
-
-- [Ethernaut](https://ethernaut.openzeppelin.com/)
-- [Solidity Docs – Arithmetic Safety](https://docs.soliditylang.org/en/latest/080-breaking-changes.html#unchecked)
-- [OpenZeppelin Contracts – SafeMath](https://docs.openzeppelin.com/contracts/2.x/api/math)
-- [blog](https://shubhamm.me/blog/ethernaut_challenges_token)
+* [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+* [Solidity Docs – Arithmetic Safety](https://docs.soliditylang.org/en/latest/080-breaking-changes.html#unchecked)
+* [OpenZeppelin Contracts – SafeMath](https://docs.openzeppelin.com/contracts/2.x/api/math)
+* [External writeup](https://shubhamm.me/blog/ethernaut_challenges_token)
 
 ---

